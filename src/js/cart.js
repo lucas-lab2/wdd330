@@ -1,6 +1,5 @@
-import { getLocalStorage, loadHeaderFooter } from "./utils.mjs";
 
-loadHeaderFooter();
+import { getLocalStorage } from "./utils.mjs";
 
 function renderCartContents() {
   const cartItems = getLocalStorage("so-cart") || [];
@@ -9,20 +8,23 @@ function renderCartContents() {
 }
 
 function cartItemTemplate(item) {
-  return `<li class="cart-card divider">
-  <a href="/product_pages/index.html?product=${item.Id}" class="cart-card__image">
+  const image = item.Images?.PrimaryMedium || item.Image;
+  const newItem = `<li class="cart-card divider">
+  <a href="#" class="cart-card__image">
     <img
-      src="${item.Image}"
+      src="${image}"
       alt="${item.Name}"
     />
   </a>
-  <a href="/product_pages/index.html?product=${item.Id}">
+  <a href="#">
     <h2 class="card__name">${item.Name}</h2>
   </a>
-  <p class="cart-card__color">${item.Colors[0].ColorName}</p>
+  <p class="cart-card__color">${item.Colors?.[0]?.ColorName || ""}</p>
   <p class="cart-card__quantity">qty: 1</p>
   <p class="cart-card__price">$${item.FinalPrice}</p>
 </li>`;
+
+  return newItem;
 }
 
 renderCartContents();
