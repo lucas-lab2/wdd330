@@ -58,6 +58,8 @@
       <section class="products">
         <h2>My Cart</h2>
 
+        <p id="cart-empty-message">Your cart is empty.</p>
+
         <ul class="product-list">
           <!-- <li class="cart-card divider">
             <a href="product_pages/marmot-ajax-3.html" class="cart-card__image">
@@ -90,6 +92,10 @@
             <p class="cart-card__price">$199.99</p>
           </li> -->
         </ul>
+        <div class="cart-footer">
+          <p class="cart-total">Subtotal: <span id="cart-total">$0.00</span></p>
+          <a class="checkout-button" href="/checkout/index.html" hidden>Checkout</a>
+        </div>
       </section>
     </main>
 

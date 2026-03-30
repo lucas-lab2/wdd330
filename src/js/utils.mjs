@@ -1,20 +1,26 @@
-
-// wrapper for querySelector...returns matching element
 export function qs(selector, parent = document) {
   return parent.querySelector(selector);
 }
 
-// retrieve data from localstorage
 export function getLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key));
+  const data = localStorage.getItem(key);
+  if (!data) return [];
+  try {
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Invalid localStorage data", error);
+    return [];
+  }
 }
 
-// save data to local storage
 export function setLocalStorage(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// set a listener for both touchend and click
+export function removeLocalStorage(key) {
+  localStorage.removeItem(key);
+}
+
 export function setClick(selector, callback) {
   qs(selector).addEventListener("touchend", (event) => {
     event.preventDefault();
@@ -26,4 +32,9 @@ export function setClick(selector, callback) {
 export function getParam(param) {
   const params = new URLSearchParams(window.location.search);
   return params.get(param);
+}
+
+export function formDataToJSON(formElement) {
+  const formData = new FormData(formElement);
+  return Object.fromEntries(formData.entries());
 }
