@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { alertMessage, getLocalStorage, setLocalStorage } from './utils.mjs';
 
 export default class ProductDetails {
   constructor(productId, dataSource) {
@@ -10,40 +10,44 @@ export default class ProductDetails {
   async init() {
     this.product = await this.dataSource.findProductById(this.productId);
     this.renderProductDetails();
-    document
-      .getElementById("addToCart")
-      .addEventListener("click", this.addToCart.bind(this));
+
+    const addToCartButton = document.getElementById('addToCart');
+    if (addToCartButton) {
+      addToCartButton.addEventListener('click', this.addProductToCart.bind(this));
+    }
   }
 
-  addToCart() {
-    const cartItems = getLocalStorage("so-cart");
+  addProductToCart() {
+    const cartItems = getLocalStorage('so-cart') || [];
     const existingItem = cartItems.find((item) => item.Id === this.product.Id);
-
     if (existingItem) {
       existingItem.quantity = (existingItem.quantity || 1) + 1;
     } else {
       cartItems.push({ ...this.product, quantity: 1 });
     }
-
-    setLocalStorage("so-cart", cartItems);
-    window.location.href = "/cart/index.html";
+    setLocalStorage('so-cart', cartItems);
+    alertMessage('Item added to cart.', false);
   }
 
   renderProductDetails() {
-    const product = this.product;
-    const image = product.Images?.PrimaryLarge || product.Images?.PrimaryMedium || product.Image;
-    const productContainer = document.querySelector(".product-detail");
-    document.title = `Sleep Outside | ${product.Name}`;
-    productContainer.innerHTML = `
-      <h3>${product.Brand?.Name || ""}</h3>
-      <h2 class="divider">${product.NameWithoutBrand || product.Name}</h2>
-      <img class="divider" src="${image}" alt="${product.Name}" />
-      <p class="product-card__price">$${Number(product.FinalPrice).toFixed(2)}</p>
-      <p class="product__color">${product.Colors?.[0]?.ColorName || ""}</p>
-      <p class="product__description">${product.DescriptionHtmlSimple || product.Description || ""}</p>
+    const productDetailSection = document.querySelector('.product-detail');
+
+    productDetailSection.innerHTML = `
+      <h3>${this.product.Brand.Name}</h3>
+      <h2 class="divider">${this.product.NameWithoutBrand}</h2>
+      <img
+        class="divider"
+        src="${this.product.Image}"
+        alt="${this.product.Name}"
+      />
+      <p class="product-card__price">$${this.product.FinalPrice.toFixed(2)}</p>
+      <p class="product__color">${this.product.Colors[0].ColorName}</p>
+      <p class="product__description">${this.product.DescriptionHtmlSimple}</p>
       <div class="product-detail__add">
-        <button id="addToCart" type="button">Add to Cart</button>
+        <button id="addToCart" data-id="${this.product.Id}">Add to Cart</button>
       </div>
     `;
+
+    document.title = `Sleep Outside | ${this.product.Name}`;
   }
 }

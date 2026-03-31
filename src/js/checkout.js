@@ -1,19 +1,19 @@
-import CheckoutProcess from "./CheckoutProcess.mjs";
+import CheckoutProcess from './CheckoutProcess.mjs';
 
-const checkout = new CheckoutProcess("so-cart", ".order-summary");
-checkout.init();
+const myCheckout = new CheckoutProcess('so-cart', '.order-summary');
+myCheckout.init();
 
-const form = document.querySelector("#checkout-form");
-const zipInput = document.querySelector("#zip");
+document.getElementById('zip').addEventListener('blur', () => {
+  myCheckout.calculateOrderTotal();
+});
 
-if (zipInput) {
-  zipInput.addEventListener("blur", () => checkout.calculateOrderTotal());
-}
-
-if (form) {
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!form.reportValidity()) return;
-    await checkout.checkout(form);
-  });
-}
+document.querySelector('#checkoutSubmit').addEventListener('click', (e) => {
+  e.preventDefault();
+  const myForm = document.forms[0];
+  const chkStatus = myForm.checkValidity();
+  myForm.reportValidity();
+  if (chkStatus) {
+    myCheckout.calculateOrderTotal();
+    myCheckout.checkout(myForm);
+  }
+});
